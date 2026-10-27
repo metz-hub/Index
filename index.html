@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dashboard de comentarios del curso</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f27;--mu:#667085;--bd:#e4e7ec;--pos:#1a9e6b;--neu:#e0a21b;--neg:#d64545;--ac:#3b6fe0;--tr:#edf0f5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171c;--card:#1d2128;--tx:#eceff4;--mu:#9aa3b2;--bd:#2b313b;--pos:#38c28d;--neu:#f0b84a;--neg:#ef6b6b;--ac:#6f95f0;--tr:#2a303a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14171c;--card:#1d2128;--tx:#eceff4;--mu:#9aa3b2;--bd:#2b313b;--pos:#38c28d;--neu:#f0b84a;--neg:#ef6b6b;--ac:#6f95f0;--tr:#2a303a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:24px;margin:0 0 2px}
+.sub{color:var(--mu);margin:0 0 20px;font-size:14px}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:14px}
+.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px}
+.kpi .v{font-size:28px;font-weight:700;line-height:1.1}
+.kpi .l{color:var(--mu);font-size:13px;margin-top:4px}
+h2{font-size:15px;margin:0 0 12px}
+.row{display:grid;grid-template-columns:130px 1fr 44px;gap:8px;align-items:center;margin:7px 0;font-size:13px}
+.row .n{color:var(--mu);text-align:right}
+.tr{height:12px;background:var(--tr);border-radius:6px;overflow:hidden}
+.fi{height:100%;border-radius:6px}
+.stack{display:flex;height:22px;border-radius:8px;overflow:hidden;margin:6px 0 12px}
+.stack div{height:100%}
+.leg{display:flex;flex-wrap:wrap;gap:14px;font-size:13px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.cols{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:8px}
+.col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:12px;color:var(--mu)}
+.col b{color:var(--tx);font-size:13px}
+.col .bar{width:100%;max-width:46px;background:var(--ac);border-radius:6px 6px 0 0;margin:3px 0}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--bd);vertical-align:top}
+th{color:var(--mu);font-weight:600}
+.tag{padding:2px 8px;border-radius:99px;font-size:12px;color:#fff;white-space:nowrap}
+.note{color:var(--mu);font-size:12px;margin-top:14px}
+</style>
+</head>
+<body>
+<main>
+<h1>Dashboard de comentarios del curso</h1>
+<p class="sub">Curso de finanzas personales · 17–21 oct 2026 · 18 comentarios analizados</p>
+<div class="grid kpis" id="kpis"></div>
+<div class="grid two">
+  <div class="card"><h2>Sentimiento de los comentarios</h2><div id="sent"></div></div>
+  <div class="card"><h2>Distribución de satisfacción (1–5)</h2><div class="cols" id="sat"></div></div>
+</div>
+<div class="grid two">
+  <div class="card"><h2>Módulo favorito: menciones</h2><div id="mod"></div></div>
+  <div class="card"><h2>Módulo favorito: satisfacción promedio</h2><div id="modsat"></div></div>
+</div>
+<div class="grid two">
+  <div class="card"><h2>Comentarios por día</h2><div class="cols" id="day"></div></div>
+  <div class="card"><h2>Hallazgos clave</h2><div id="ins" style="font-size:14px"></div></div>
+</div>
+<div class="card"><h2>Comentarios con más likes</h2><div class="tw"><table id="top"></table></div></div>
+<p class="note">El archivo cargado contenía 18 filas de datos; al final incluía una nota indicando que el total sería de 150. Los resultados corresponden solo a esas 18 filas.</p>
+</main>
+<script>
+const D=[
+["estudiante001","2026-10-21","El curso fue muy claro y me ayudó a entender mejor las finanzas","Positivo",34,"Inversiones",5],
+["juanito22","2026-10-20","Aprendí a manejar mejor mi dinero y evitar fraudes","Positivo",27,"Manejo de dinero",5],
+["luz_maria90","2026-10-19","Buena información, pero esperaba más ejemplos prácticos","Neutral",15,"Ahorro e inversión",3],
+["carla_puebla","2026-10-21","Me gustó cómo explicaron las inversiones para principiantes","Positivo",40,"Inversiones",5],
+["alonso_r","2026-10-18","Algunos temas muy básicos, pero útil para empezar","Neutral",8,"Generar dinero",3],
+["maria_edu","2026-10-21","Excelente contenido y explicación sencilla","Positivo",50,"Estrategia financiera",5],
+["josefg31","2026-10-17","No me gustó la parte de emprender, esperaba más en inversión","Negativo",5,"Generar dinero",2],
+["carola99","2026-10-21","El módulo de protección financiera fue muy útil para evitar fraudes","Positivo",44,"Elegir inversiones",5],
+["daniel78","2026-10-20","Estoy empezando a invertir gracias al curso","Positivo",37,"Inversiones",5],
+["sofia101","2026-10-19","Faltaron temas sobre criptomonedas","Neutral",12,"Inversiones",3],
+["miguel_a","2026-10-21","Muy recomendable para estudiantes","Positivo",43,"Manejo de dinero",5],
+["valentinaX","2026-10-18","Información básica pero necesaria para empezar","Positivo",30,"Generar dinero",4],
+["pablo_raul","2026-10-20","No entendí bien el tema de ETFs","Negativo",6,"Inversiones",2],
+["ana_gomez","2026-10-21","Los consejos para evitar estafas fueron muy valiosos","Positivo",41,"Elegir inversiones",5],
+["luismario12","2026-10-17","Podrían incluir más casos de éxito","Neutral",9,"Estrategia financiera",3],
+["karlaRojas","2026-10-21","Me encantó la estructura y claridad","Positivo",48,"Manejo de dinero",5],
+["diego_ml","2026-10-20","Los ejemplos ayudaron mucho a entender conceptos complicados","Positivo",39,"Inversiones",5],
+["susanaV","2026-10-19","Demasiado centrado en México, pero se entiende que es el público objetivo","Neutral",14,"General",4]
+].map(r=>({u:r[0],d:r[1],c:r[2],t:r[3],l:r[4],m:r[5],n:r[6]}));
+const $=id=>document.getElementById(id);
+const col={Positivo:'var(--pos)',Neutral:'var(--neu)',Negativo:'var(--neg)'};
+const N=D.length, avg=a=>a.reduce((s,x)=>s+x,0)/a.length;
+const likes=D.reduce((s,x)=>s+x.l,0), sat=avg(D.map(x=>x.n));
+const cnt=k=>D.reduce((o,x)=>(o[x[k]]=(o[x[k]]||0)+1,o),{});
+const T=cnt('t'), pos=Math.round(T.Positivo/N*100);
+$('kpis').innerHTML=[[N,'Comentarios'],[sat.toFixed(1)+' / 5','Satisfacción promedio'],[pos+'%','Comentarios positivos'],[likes,'Likes totales'],[(likes/N).toFixed(1),'Likes por comentario']]
+.map(k=>`<div class="card kpi"><div class="v">${k[0]}</div><div class="l">${k[1]}</div></div>`).join('');
+$('sent').innerHTML='<div class="stack">'+['Positivo','Neutral','Negativo'].map(k=>`<div style="width:${T[k]/N*100}%;background:${col[k]}"></div>`).join('')+'</div><div class="leg">'+['Positivo','Neutral','Negativo'].map(k=>`<span><i class="dot" style="background:${col[k]}"></i>${k}: ${T[k]} (${Math.round(T[k]/N*100)}%)</span>`).join('')+'</div>';
+function cols(el,pairs,fmt){const mx=Math.max(...pairs.map(p=>p[1]));$(el).innerHTML=pairs.map(p=>`<div class="col"><b>${fmt?fmt(p[1]):p[1]}</b><div class="bar" style="height:${p[1]/mx*100}px"></div>${p[0]}</div>`).join('')}
+const S=cnt('n');cols('sat',[1,2,3,4,5].map(i=>[i+'★',S[i]||0]));
+const dd=cnt('d');cols('day',Object.keys(dd).sort().map(k=>[k.slice(8)+' oct',dd[k]]));
+const mods=Object.entries(cnt('m')).sort((a,b)=>b[1]-a[1]);
+function bars(el,rows,mx,color,fmt){$(el).innerHTML=rows.map(r=>`<div class="row"><span>${r[0]}</span><div class="tr"><div class="fi" style="width:${r[1]/mx*100}%;background:${color(r)}"></div></div><span class="n">${fmt(r[1])}</span></div>`).join('')}
+bars('mod',mods,Math.max(...mods.map(m=>m[1])),()=>'var(--ac)',v=>v);
+const ms=mods.map(([m])=>[m,avg(D.filter(x=>x.m===m).map(x=>x.n))]).sort((a,b)=>b[1]-a[1]);
+bars('modsat',ms,5,r=>r[1]>=4.5?'var(--pos)':r[1]>=3.5?'var(--ac)':'var(--neu)',v=>v.toFixed(1));
+const ml=Object.entries(D.reduce((o,x)=>(o[x.m]=(o[x.m]||0)+x.l,o),{})).sort((a,b)=>b[1]-a[1])[0];
+const avgL=t=>avg(D.filter(x=>x.t===t).map(x=>x.l)).toFixed(0);
+$('ins').innerHTML=`<p>• <b>${pos}%</b> de los comentarios son positivos y solo <b>${T.Negativo}</b> son negativos.</p>
+<p>• <b>${ml[0]}</b> concentra más likes (${ml[1]}) y es el módulo más mencionado (${mods[0][1]} menciones).</p>
+<p>• <b>Manejo de dinero</b> y <b>Elegir inversiones</b> obtienen 5.0 de satisfacción; <b>Generar dinero</b> es el más bajo (3.0).</p>
+<p>• Los comentarios positivos reciben en promedio ${avgL('Positivo')} likes, frente a ${avgL('Neutral')} los neutrales y ${avgL('Negativo')} los negativos.</p>
+<p>• Peticiones recurrentes: más ejemplos prácticos, casos de éxito, criptomonedas y explicar mejor los ETFs.</p>`;
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+$('top').innerHTML='<tr><th>Usuario</th><th>Comentario</th><th>Módulo</th><th>Tipo</th><th>Likes</th></tr>'+[...D].sort((a,b)=>b.l-a.l).slice(0,6).map(x=>`<tr><td>${esc(x.u)}</td><td>${esc(x.c)}</td><td>${esc(x.m)}</td><td><span class="tag" style="background:${col[x.t]}">${x.t}</span></td><td><b>${x.l}</b></td></tr>`).join('');
+</script>
+</body>
+</html>
